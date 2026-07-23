@@ -55,51 +55,22 @@
 
 ## 快速开始
 
-### 检索文档
+该 Skill 采用 SKILL.md 的 Agent Skill 格式，安装方式即把整个 `wwise-waapi-skill/`
+目录放入对应工具的 skills 目录，Agent 会通过 `SKILL.md` 的描述自动发现并按需加载。
 
-```powershell
-# 关键词 AND 搜索（大小写不敏感），返回命中页 id
-python scripts\search.py ak.wwise.core.object.get
-python scripts\search.py IAkPlugin factory
+以 **Cursor** 为例：
 
-# 按 id 打印整页
-python scripts\search.py --get 3375
+```
+# 全局可用（所有项目）
+~/.cursor/skills/wwise-waapi-skill/
+# Windows: C:\Users\<用户名>\.cursor\skills\wwise-waapi-skill\
 
-# 过滤选项：--regex / --type / --file / --limit / --context
-python scripts\search.py AK_STATIC_LINK_PLUGIN --type MemberDetail
-python scripts\search.py --file AkSoundEngine.h
+# 或仅对某个项目可用
+<项目>/.cursor/skills/wwise-waapi-skill/
 ```
 
-首次检索会在 `data/` 旁生成索引 `WwiseSDK-Windows.jsonl.idx`（自动维护，可安全删除），
-其后每次查询约几十毫秒。不要直接读取约 19MB 的 `data/WwiseSDK-Windows.jsonl`。
-
-### 查询接口 schema
-
-```powershell
-# 取某个过程的完整参数 schema
-python scripts\wwise_waapi.py ak.wwise.waapi.getSchema '{"uri":"ak.wwise.core.object.get","includeExamples":true}'
-
-# 列出当前 Wwise 暴露的全部过程
-python scripts\wwise_waapi.py ak.wwise.waapi.getFunctions
-```
-
-### 发起调用（可选）
-
-```powershell
-# CLI：<uri> <args-json> [options-json]
-python scripts\wwise_waapi.py ak.wwise.core.object.get `
-  '{"waql":"$ from type Sound take 5"}' '{"return":["id","name"]}'
-```
-
-```python
-# 作为库导入，复用连接执行批量逻辑
-from scripts.wwise_waapi import call
-result = call("ak.wwise.core.object.get",
-              args={"waql": "$ from type Sound where volume > 0"},
-              options={"return": ["id", "name"]})
-for s in result["return"]:
-    ...
-```
+放置完成后即可使用，无需额外注册。其他遵循同一 Skill 格式的工具，放入其各自的
+skills 目录即可（如 Claude Code 的 `.claude/skills/`）。
 
 ---
 
