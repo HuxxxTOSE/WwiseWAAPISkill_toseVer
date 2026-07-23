@@ -53,24 +53,78 @@
 
 ---
 
-## 快速开始
+## 快速开始（安装）
 
-该 Skill 采用 SKILL.md 的 Agent Skill 格式，安装方式即把整个 `wwise-waapi-skill/`
-目录放入对应工具的 skills 目录，Agent 会通过 `SKILL.md` 的描述自动发现并按需加载。
+该 Skill 采用 SKILL.md 的 Agent Skill 格式：安装 = 把整个 `wwise-waapi-skill/` 目录
+放进工具的 skills 目录。放好后 Agent 会通过 `SKILL.md` 自动发现，无需注册。下面以
+**Cursor（Windows）** 为例，逐步说明。
 
-以 **Cursor** 为例：
+### 第 1 步：先决定放在哪
+
+- **全局**（所有项目都能用）：放到用户目录下的 `.cursor\skills\`
+  完整路径为 `C:\Users\<你的用户名>\.cursor\skills\`。
+- **项目级**（只对某个项目生效）：放到该项目根目录下的 `.cursor\skills\`。
+
+下面用全局为例。
+
+### 第 2 步：获取文件（二选一）
+
+**方式 A — 用 git 克隆（推荐）**
+
+```powershell
+# 这台机器上 git 没进 PATH，先临时加进来
+$env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
+
+# 确保目标目录存在，然后克隆进去
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.cursor\skills" | Out-Null
+cd "$env:USERPROFILE\.cursor\skills"
+git clone https://github.com/HuxxxTOSE/WwiseSDKSkill_toseVer.git wwise-waapi-skill
+```
+
+**方式 B — 下载 ZIP**
+
+1. 打开仓库页面 → 绿色 **Code** 按钮 → **Download ZIP**。
+2. 解压。注意解压后文件夹名通常是 `WwiseSDKSkill_toseVer-main`，里面才是内容。
+3. 把它放到 `C:\Users\<你的用户名>\.cursor\skills\` 下，并**重命名为 `wwise-waapi-skill`**。
+
+### 第 3 步：核对目录结构
+
+最终必须是这样（`SKILL.md` 直接位于 `wwise-waapi-skill` 下，不能多套一层）：
 
 ```
-# 全局可用（所有项目）
-~/.cursor/skills/wwise-waapi-skill/
-# Windows: C:\Users\<用户名>\.cursor\skills\wwise-waapi-skill\
-
-# 或仅对某个项目可用
-<项目>/.cursor/skills/wwise-waapi-skill/
+C:\Users\<你的用户名>\.cursor\skills\wwise-waapi-skill\
+├─ SKILL.md
+├─ scripts\
+├─ data\
+├─ workflows\
+└─ references\
 ```
 
-放置完成后即可使用，无需额外注册。其他遵循同一 Skill 格式的工具，放入其各自的
-skills 目录即可（如 Claude Code 的 `.claude/skills/`）。
+可以用命令快速确认（应输出 `True`）：
+
+```powershell
+Test-Path "$env:USERPROFILE\.cursor\skills\wwise-waapi-skill\SKILL.md"
+```
+
+> `.cursor` 是隐藏文件夹。在资源管理器里如果看不到，勾选"查看 → 隐藏的项目"，
+> 或直接在地址栏输入 `%USERPROFILE%\.cursor\skills` 回车进入。
+
+### 第 4 步：让 Cursor 识别
+
+重启 Cursor（或新建一个对话）。当你的提问涉及 Wwise / WAAPI 时，Agent 会自动加载
+本 Skill，无需手动开启。
+
+### （可选）第 5 步：装脚本依赖
+
+只有当你要用 `scripts/` 里的 Python 脚本时才需要（纯文档检索只需 Python，实际发起
+调用还需 `waapi-client`），详见上方 [环境要求](#环境要求)：
+
+```powershell
+pip install waapi-client
+```
+
+> 其他遵循同一 Skill 格式的工具，放入各自的 skills 目录即可（如 Claude Code 的
+> `.claude/skills/`）。
 
 ---
 
