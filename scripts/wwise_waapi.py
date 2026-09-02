@@ -20,7 +20,8 @@ Two ways to use this file:
                      args={"waql": "$ from type Sound"},
                      options={"return": ["id", "name"]})
 
-The connection is opened lazily and closed at process exit.
+The connection is opened lazily and closed (bounded, non-blocking) at process
+exit. Library users may call ``disconnect()`` for a deterministic early close.
 """
 
 from __future__ import annotations
@@ -43,26 +44,120 @@ except ImportError:
 
 
 _client: Optional[WaapiClient] = None
+_daemonized = False
+
+
+def _daemonize_waapi_threads() -> None:
+    """Make ``waapi-client``'s internal threads daemon so a script that merely
+    ``import``s this module can exit promptly.
+
+    ``waapi-client`` runs its WAMP asyncio loop and callback executor on
+    non-daemon threads, and ``WaapiClient.disconnect()`` joins them without a
+    timeout (and never stops the executor). A plain library script therefore
+    hangs forever at interpreter exit waiting on those threads. Daemonising them
+    lets the interpreter exit normally (with the real exit code) once the script
+    finishes, without resorting to ``os._exit`` in library code.
+
+    Best-effort and version-tolerant: patches by name at call time and swallows
+    any error, so a future ``waapi-client`` refactor simply falls back to the
+    original behaviour instead of breaking imports.
+    """
+    global _daemonized
+    if _daemonized:
+        return
+    _daemonized = True
+
+    # 1) The WAMP runner thread that owns the asyncio event loop.
+    #    Patch its ``start`` to flag the thread daemon *before* it launches. We
+    #    deliberately do NOT rebind ``ak_autobahn._WampClientThread`` because its
+    #    own ``__init__`` calls ``super(_WampClientThread, self)`` via that very
+    #    module global — rebinding the name would corrupt the MRO lookup.
+    try:
+        from waapi.wamp import ak_autobahn
+
+        _wamp_cls = ak_autobahn._WampClientThread
+        if not getattr(_wamp_cls, "_ak_daemon_patched", False):
+            _orig_start = _wamp_cls.start
+
+            def _daemon_start(self, _orig_start=_orig_start):
+                try:
+                    self.daemon = True
+                except Exception:
+                    pass
+                return _orig_start(self)
+
+            _wamp_cls.start = _daemon_start
+            _wamp_cls._ak_daemon_patched = True
+    except Exception:
+        pass
+
+    # 2) The callback-executor threads (started even for call-only sessions).
+    #    Here a subclass is safe: ``threading.Thread`` never resolves the
+    #    executor module's ``Thread`` name, so rebinding it breaks nothing.
+    try:
+        from waapi.client import executor as _executor
+
+        _BaseThread = _executor.Thread
+        if not getattr(_BaseThread, "_ak_daemonized", False):
+            class _DaemonExecutorThread(_BaseThread):
+                _ak_daemonized = True
+
+                def start(self):
+                    try:
+                        self.daemon = True
+                    except Exception:
+                        pass
+                    return super().start()
+
+            _executor.Thread = _DaemonExecutorThread
+    except Exception:
+        pass
 
 
 def _get_client() -> WaapiClient:
     global _client
     if _client is None or not _client.is_connected():
+        _daemonize_waapi_threads()
         _client = WaapiClient()
     return _client
 
 
 def _close_client() -> None:
+    """Disconnect the shared client, nulling it so the next call reconnects."""
     global _client
-    if _client is not None:
+    client, _client = _client, None
+    if client is not None:
         try:
-            _client.disconnect()
+            client.disconnect()
         except Exception:
             pass
-        _client = None
 
 
-atexit.register(_close_client)
+def _close_client_bounded(timeout: float = 2.0) -> None:
+    """Best-effort disconnect that never blocks shutdown for long.
+
+    `WaapiClient.disconnect()` can block (~45s on Windows, or indefinitely while
+    Wwise is connected) because the WAMP connection runs on a background thread.
+    Run the disconnect on a daemon thread and wait only briefly; if it has not
+    finished, let the process exit anyway (the OS reclaims the socket). This
+    protects BOTH the CLI path and library importers that rely on the atexit
+    handler below.
+    """
+    worker = threading.Thread(target=_close_client, daemon=True)
+    worker.start()
+    worker.join(timeout=timeout)
+
+
+def disconnect() -> None:
+    """Public helper: close the shared client promptly (bounded wait).
+
+    Optional for library users — the atexit handler calls this automatically —
+    but handy when you want a deterministic, fast close mid-script.
+    """
+    _close_client_bounded()
+
+
+atexit.register(_close_client_bounded)
 
 
 def call(
@@ -133,17 +228,14 @@ def _main(argv: list[str]) -> int:
 def _shutdown(code: int) -> "None":
     """Flush output and terminate promptly, avoiding a hung exit.
 
-    `waapi-client` runs the WAMP connection on a non-daemon background thread.
-    On Windows, `WaapiClient.disconnect()` (invoked via atexit) can block the
-    interpreter from exiting for ~45s. We attempt a best-effort disconnect on a
-    daemon thread with a short timeout, then force-exit so the CLI returns
-    immediately regardless of the background thread's state.
+    `waapi-client` runs the WAMP connection on a background thread whose
+    `disconnect()` can block interpreter exit. We do a bounded best-effort
+    disconnect, then force-exit so the CLI returns immediately regardless of the
+    background thread's state.
     """
     sys.stdout.flush()
     sys.stderr.flush()
-    closer = threading.Thread(target=_close_client, daemon=True)
-    closer.start()
-    closer.join(timeout=2.0)
+    _close_client_bounded()
     os._exit(code)
 
 
