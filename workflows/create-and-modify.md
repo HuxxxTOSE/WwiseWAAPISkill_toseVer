@@ -122,7 +122,7 @@ python scripts\wwise_waapi.py ak.wwise.core.undo.beginGroup
 python scripts\wwise_waapi.py ak.wwise.core.undo.endGroup
 ```
 
-Pair every `beginGroup` with exactly one `endGroup` (or `cancelGroup` to roll back). They nest. Across multiple `waapi.py` invocations this works because the wrapper opens a fresh connection per process — but the undo group lives in Wwise, not in the client, so it spans calls. Still, prefer running grouped edits inside a single Python script for atomicity.
+Pair every `beginGroup` with exactly one `endGroup` (or `cancelGroup` to roll back). They nest. Across multiple `wwise_waapi.py` invocations this works because the wrapper opens a fresh connection per process — but the undo group lives in Wwise, not in the client, so it spans calls. Still, prefer running grouped edits inside a single Python script for atomicity.
 
 ## Override switches — the recurring trap
 

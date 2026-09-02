@@ -45,8 +45,8 @@
 | Python | 3.9+ | 运行 `scripts/search.py`（文档检索，仅用标准库） |
 | `waapi-client` | `pip install waapi-client` | 仅当需要通过 `scripts/wwise_waapi.py` 实际发起调用时才需要；纯文档检索不需要 |
 
-`waapi-client` 默认连接 WAMP 端口 `ws://127.0.0.1:8080/waapi`（WebSocket 端口，非 HTTP 的
-8090/8095）。
+`waapi-client` 默认连接 WAMP 端口 `ws://127.0.0.1:8080/waapi`（WebSocket 端口，与 WAAPI 的
+HTTP 端口 8090 不同，后者不被 `waapi-client` 使用）。
 
 文档语料对应版本 2024.1.13，适用于该版本及以上；若更高版本重命名了 URI 或更改了参数
 结构，以运行中 Wwise 的 `ak.wwise.waapi.getSchema` 返回为准。

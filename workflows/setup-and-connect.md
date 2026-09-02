@@ -16,7 +16,7 @@ pip install waapi-client
 
 1. Launch Wwise Authoring 2024.1 or later.
 2. **Project → User Preferences → Enable Wwise Authoring API** must be checked.
-3. Confirm the WAAPI port (default 8095). Custom port? Override in `WaapiClient(url="ws://127.0.0.1:<port>/waapi")` — see "Non-default port" below.
+3. Confirm the WAAPI (WAMP/WebSocket) port (default 8080; the HTTP port 8090 is separate and not used by `waapi-client`). Custom port? Override in `WaapiClient(url="ws://127.0.0.1:<port>/waapi")` — see "Non-default port" below.
 
 Open the project that you intend to operate on. WAAPI will accept calls without a project loaded, but most procedures need one.
 
@@ -56,11 +56,11 @@ def _get_client() -> WaapiClient:
 
 ## Multi-call sessions
 
-The wrapper holds a single persistent `WaapiClient` for the lifetime of the Python process and disconnects at exit. Calling `waapi.py` repeatedly from PowerShell creates a new process per call (one connection each). For tighter loops, write a one-off Python script that imports `call` directly and reuses the connection across hundreds of operations.
+The wrapper holds a single persistent `WaapiClient` for the lifetime of the Python process and disconnects at exit. Calling `wwise_waapi.py` repeatedly from PowerShell creates a new process per call (one connection each). For tighter loops, write a one-off Python script that imports `call` directly and reuses the connection across hundreds of operations.
 
 ```python
-# tighten_loop.py
-from waapi import call
+# tighten_loop.py  (run from the skill root)
+from scripts.wwise_waapi import call
 ids = [r["id"] for r in call(
     "ak.wwise.core.object.get",
     args={"waql": "$ from type Sound take 100"},

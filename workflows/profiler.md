@@ -90,7 +90,8 @@ Pair every `registerMeter` with an eventual `unregisterMeter`.
 ## Typical capture workflow
 
 ```python
-from waapi import call
+# run from the skill root
+from scripts.wwise_waapi import call
 
 # 1. Pick what to record
 call("ak.wwise.core.profiler.enableProfilerData", args={
