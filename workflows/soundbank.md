@@ -5,7 +5,7 @@ Three procedures cover the SoundBank lifecycle: inspect, edit, generate.
 ## Inspect inclusion list
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.soundbank.getInclusions '{"soundbank":"\\SoundBanks\\Default Work Unit\\MyBank"}'
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.getInclusions '{"soundbank":"\\SoundBanks\\Default Work Unit\\MyBank"}'
 ```
 
 Returns:
@@ -23,7 +23,7 @@ Returns:
 ## Modify inclusion list
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.soundbank.setInclusions '{
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.setInclusions '{
   "soundbank": "\\SoundBanks\\Default Work Unit\\MyBank",
   "operation": "add",
   "inclusions": [
@@ -43,20 +43,20 @@ python scripts\waapi.py ak.wwise.core.soundbank.setInclusions '{
 
 ```powershell
 # Generate everything for all platforms/languages, write to disk
-python scripts\waapi.py ak.wwise.core.soundbank.generate '{
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.generate '{
   "rebuildSoundBanks": true,
   "writeToDisk": true
 }'
 
 # Generate a specific bank for one platform
-python scripts\waapi.py ak.wwise.core.soundbank.generate '{
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.generate '{
   "soundbanks": [{"name": "MyBank"}],
   "platforms": ["Windows"],
   "writeToDisk": true
 }'
 
 # Force a clean rebuild (deletes audio cache - SLOW; confirm first)
-python scripts\waapi.py ak.wwise.core.soundbank.generate '{
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.generate '{
   "rebuildSoundBanks": true,
   "clearAudioFileCache": true,
   "writeToDisk": true
@@ -83,7 +83,7 @@ Response includes a `logs` array — inspect for `Warning` / `Error` / `Fatal Er
 For just the SoundBank generation log without re-running:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.log.get '{"channel":"soundbankGenerate"}'
+python scripts\wwise_waapi.py ak.wwise.core.log.get '{"channel":"soundbankGenerate"}'
 ```
 
 ## Typical pipeline pattern

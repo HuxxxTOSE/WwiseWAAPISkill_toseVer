@@ -5,7 +5,7 @@ The single read primitive is `ak.wwise.core.object.get`. It accepts a WAQL strin
 ## The basic call
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.get `
+python scripts\wwise_waapi.py ak.wwise.core.object.get `
   '{"waql":"$ from type Sound take 5"}' `
   '{"return":["id","name","path","type"]}'
 ```
@@ -47,8 +47,8 @@ The response is `{"return": [<row>, ...]}`. Each row is a dict keyed by the acce
 ## Pagination on large queries
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.get '{"waql":"$ from type Event skip 0 take 100"}' '{"return":["id","name"]}'
-python scripts\waapi.py ak.wwise.core.object.get '{"waql":"$ from type Event skip 100 take 100"}' '{"return":["id","name"]}'
+python scripts\wwise_waapi.py ak.wwise.core.object.get '{"waql":"$ from type Event skip 0 take 100"}' '{"return":["id","name"]}'
+python scripts\wwise_waapi.py ak.wwise.core.object.get '{"waql":"$ from type Event skip 100 take 100"}' '{"return":["id","name"]}'
 ```
 
 There is **no `limit` keyword**. WAQL uses `take` and `skip`.
@@ -56,8 +56,8 @@ There is **no `limit` keyword**. WAQL uses `take` and `skip`.
 ## Discovering accessors for an unfamiliar type
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"\\Effects\\Default Work Unit\\MyReverb"}'
-python scripts\waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"PreDelay","object":"\\Effects\\Default Work Unit\\MyReverb"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"\\Effects\\Default Work Unit\\MyReverb"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"PreDelay","object":"\\Effects\\Default Work Unit\\MyReverb"}'
 ```
 
 ## Selected objects (Wwise UI)
@@ -65,7 +65,7 @@ python scripts\waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"PreDe
 To read what the user has currently selected in the Authoring UI:
 
 ```powershell
-python scripts\waapi.py ak.wwise.ui.getSelectedObjects '{}' '{"return":["id","name","type","path"]}'
+python scripts\wwise_waapi.py ak.wwise.ui.getSelectedObjects '{}' '{"return":["id","name","type","path"]}'
 ```
 
 Useful when the user says "set the volume of the selected sounds to -6" — fetch IDs, then iterate.

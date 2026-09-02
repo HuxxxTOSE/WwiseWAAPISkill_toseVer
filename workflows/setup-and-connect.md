@@ -23,7 +23,7 @@ Open the project that you intend to operate on. WAAPI will accept calls without 
 ## Connection check
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.ping
+python scripts\wwise_waapi.py ak.wwise.core.ping
 ```
 
 Expected:
@@ -44,7 +44,7 @@ Any other outcome:
 
 ## Non-default port
 
-If the user configured a non-default WAAPI port, edit `scripts/waapi.py`:
+If the user configured a non-default WAAPI port, edit `scripts/wwise_waapi.py`:
 
 ```python
 def _get_client() -> WaapiClient:
@@ -75,9 +75,9 @@ for i in ids:
 ## Discovering what's available right now
 
 ```powershell
-python scripts\waapi.py ak.wwise.waapi.getFunctions
-python scripts\waapi.py ak.wwise.waapi.getTopics
-python scripts\waapi.py ak.wwise.waapi.getSchema '{"uri":"ak.wwise.core.object.get","includeExamples":true}'
+python scripts\wwise_waapi.py ak.wwise.waapi.getFunctions
+python scripts\wwise_waapi.py ak.wwise.waapi.getTopics
+python scripts\wwise_waapi.py ak.wwise.waapi.getSchema '{"uri":"ak.wwise.core.object.get","includeExamples":true}'
 ```
 
 Always trust the live schema over any static doc — Wwise versions add and rename fields.

@@ -61,7 +61,7 @@ The accessor surface is the same one you pass in the `return` option. See [objec
 For type-specific properties not listed there, query Wwise live:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
 ```
 
 ## Pitfalls

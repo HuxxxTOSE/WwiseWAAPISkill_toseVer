@@ -27,7 +27,9 @@ from __future__ import annotations
 
 import atexit
 import json
+import os
 import sys
+import threading
 from typing import Any, Optional
 
 try:
@@ -128,5 +130,22 @@ def _main(argv: list[str]) -> int:
     return 0
 
 
+def _shutdown(code: int) -> "None":
+    """Flush output and terminate promptly, avoiding a hung exit.
+
+    `waapi-client` runs the WAMP connection on a non-daemon background thread.
+    On Windows, `WaapiClient.disconnect()` (invoked via atexit) can block the
+    interpreter from exiting for ~45s. We attempt a best-effort disconnect on a
+    daemon thread with a short timeout, then force-exit so the CLI returns
+    immediately regardless of the background thread's state.
+    """
+    sys.stdout.flush()
+    sys.stderr.flush()
+    closer = threading.Thread(target=_close_client, daemon=True)
+    closer.start()
+    closer.join(timeout=2.0)
+    os._exit(code)
+
+
 if __name__ == "__main__":
-    sys.exit(_main(sys.argv))
+    _shutdown(_main(sys.argv))

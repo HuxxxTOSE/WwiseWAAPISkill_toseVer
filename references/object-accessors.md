@@ -3,8 +3,8 @@
 The accessors listed here are the *common* surface — usable both in WAQL `where` / `select` clauses and in the `return` option of `ak.wwise.core.object.get` / `ak.wwise.core.object.set`. Type-specific properties (e.g. effect-plugin parameters) are discoverable with:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
-python scripts\waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"Volume","object":"<path>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"Volume","object":"<path>"}'
 ```
 
 ## Accessor expression grammar

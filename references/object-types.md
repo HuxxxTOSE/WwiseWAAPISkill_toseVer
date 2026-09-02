@@ -46,7 +46,7 @@ RTPC, EffectSlot, Effect, SourcePlugin, MultiSwitchEntry, MusicPlaylistItem
 ## Discovering all type names live
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getTypes
+python scripts\wwise_waapi.py ak.wwise.core.object.getTypes
 ```
 
 Returns each type's `name` and `classId` — the latter is what some payloads (e.g. effect/source plug-in placement) need.

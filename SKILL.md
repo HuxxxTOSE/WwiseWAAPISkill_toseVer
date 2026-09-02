@@ -24,25 +24,25 @@ If the user is asking only conceptual/documentation questions about Wwise (no li
 Confirm the connection with one ping before doing anything else:
 
 ```powershell
-python "<skill-dir>\scripts\waapi.py" ak.wwise.core.ping
+python "<skill-dir>\scripts\wwise_waapi.py" ak.wwise.core.ping
 ```
 
 A healthy response is `{"isAvailable": true}`. If it errors, see [workflows/setup-and-connect.md](workflows/setup-and-connect.md).
 
 ## How to call WAAPI
 
-The skill ships a single helper, `scripts/waapi.py`, that wraps `waapi.WaapiClient`. Invoke any procedure by passing its URI plus a JSON args object (and optional options object):
+The skill ships a single helper, `scripts/wwise_waapi.py`, that wraps `waapi.WaapiClient`. Invoke any procedure by passing its URI plus a JSON args object (and optional options object):
 
 ```powershell
-python scripts\waapi.py <procedure-uri> [args-json] [options-json]
+python scripts\wwise_waapi.py <procedure-uri> [args-json] [options-json]
 ```
 
 Examples (Windows PowerShell — note the single-quoted JSON to avoid PS expansion):
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.ping
-python scripts\waapi.py ak.wwise.core.object.get '{"waql":"$ from type Sound take 5"}' '{"return":["id","name","path","type"]}'
-python scripts\waapi.py ak.wwise.core.soundbank.generate '{"rebuildSoundBanks":true,"writeToDisk":true}'
+python scripts\wwise_waapi.py ak.wwise.core.ping
+python scripts\wwise_waapi.py ak.wwise.core.object.get '{"waql":"$ from type Sound take 5"}' '{"return":["id","name","path","type"]}'
+python scripts\wwise_waapi.py ak.wwise.core.soundbank.generate '{"rebuildSoundBanks":true,"writeToDisk":true}'
 ```
 
 Output is the raw WAAPI JSON written to stdout. Errors (unreachable, modal dialog, bad args) print to stderr with a non-zero exit code.
@@ -50,7 +50,7 @@ Output is the raw WAAPI JSON written to stdout. Errors (unreachable, modal dialo
 For multi-step Python automation, import the helper directly:
 
 ```python
-from scripts.waapi import call
+from scripts.wwise_waapi import call
 sounds = call("ak.wwise.core.object.get",
               args={"waql": "$ from type Sound where volume > 0"},
               options={"return": ["id", "name"]})
@@ -89,8 +89,8 @@ This skill keeps SKILL.md small. Each operation has a dedicated workflow page; e
 When you don't know which property/reference a type exposes, call the live introspection procedure instead of hunting docs:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
-python scripts\waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"Volume","object":"<path>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path-or-guid>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"Volume","object":"<path>"}'
 ```
 
 ## Recommended task order

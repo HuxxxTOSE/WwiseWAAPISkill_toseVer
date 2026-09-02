@@ -31,7 +31,7 @@ The same set as ActorMixer, plus `InitialDelay`. RandomSequenceContainer also ha
 For any object type not covered here, query live:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyAndReferenceNames '{"object":"<path>"}'
 ```
 
 Then cross-check each candidate with `getPropertyInfo` — the response indicates whether the property is state-capable.

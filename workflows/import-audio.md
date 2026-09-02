@@ -5,7 +5,7 @@
 ## Call shape
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.audio.import '{
+python scripts\wwise_waapi.py ak.wwise.core.audio.import '{
   "importOperation": "useExisting",
   "imports": [
     {
@@ -41,7 +41,7 @@ python scripts\waapi.py ak.wwise.core.audio.import '{
 ## Idempotent batch import (the typical case)
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.audio.import '{
+python scripts\wwise_waapi.py ak.wwise.core.audio.import '{
   "importOperation": "useExisting",
   "imports": [
     {"objectPath": "\\Actor-Mixer Hierarchy\\Default Work Unit\\UI\\<Sound SFX>Click", "audioFile": "C:\\sfx\\click.wav", "event": "\\Events\\Default Work Unit\\Play_Click"},
@@ -72,10 +72,10 @@ If you're already constructing a Music Switch Container or similar, skip the sta
 ## Solo / Mute control (audition aid)
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.audio.solo '{"objects":["\\Actor-Mixer Hierarchy\\Default Work Unit\\UI\\Click"], "value": true}'
-python scripts\waapi.py ak.wwise.core.audio.mute '{"objects":["..."], "value": true}'
-python scripts\waapi.py ak.wwise.core.audio.resetSolo
-python scripts\waapi.py ak.wwise.core.audio.resetMute
+python scripts\wwise_waapi.py ak.wwise.core.audio.solo '{"objects":["\\Actor-Mixer Hierarchy\\Default Work Unit\\UI\\Click"], "value": true}'
+python scripts\wwise_waapi.py ak.wwise.core.audio.mute '{"objects":["..."], "value": true}'
+python scripts\wwise_waapi.py ak.wwise.core.audio.resetSolo
+python scripts\wwise_waapi.py ak.wwise.core.audio.resetMute
 ```
 
 Reset variants clear all solo/mute state across the project.
@@ -85,8 +85,8 @@ Reset variants clear all solo/mute state across the project.
 For drawing a waveform or detecting silence:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInTrimmedRegion '{"object":"<AudioSource path/GUID>","numPeaks":1024}'
-python scripts\waapi.py ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInRegion '{"object":"<AudioSource>","timeFrom":0.0,"timeTo":1.5,"numPeaks":256}'
+python scripts\wwise_waapi.py ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInTrimmedRegion '{"object":"<AudioSource path/GUID>","numPeaks":1024}'
+python scripts\wwise_waapi.py ak.wwise.core.audioSourcePeaks.getMinMaxPeaksInRegion '{"object":"<AudioSource>","timeFrom":0.0,"timeTo":1.5,"numPeaks":256}'
 ```
 
 Returns base64-encoded interleaved 16-bit min/max pairs per channel. Decode with NumPy:
@@ -100,7 +100,7 @@ peaks = np.frombuffer(raw, dtype=np.int16).reshape(-1, 2) / maxAbsValue
 ## Switching the active source on a Sound
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.sound.setActiveSource '{"sound":"<Sound>", "source":"<AudioSource child of the Sound>"}'
+python scripts\wwise_waapi.py ak.wwise.core.sound.setActiveSource '{"sound":"<Sound>", "source":"<AudioSource child of the Sound>"}'
 ```
 
 Useful when a Sound has multiple Audio Sources (variants / language editions) and you need to programmatically pick the active one.

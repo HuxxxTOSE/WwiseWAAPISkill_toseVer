@@ -13,7 +13,7 @@ For payload shapes, load [../references/set-objects-cookbook.md](../references/s
 ## Create one object
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.create '{
+python scripts\wwise_waapi.py ak.wwise.core.object.create '{
   "parent": "\\Actor-Mixer Hierarchy\\Default Work Unit",
   "type": "RandomSequenceContainer",
   "name": "MyContainer",
@@ -34,7 +34,7 @@ Inline accessors: any `@<Property>` / `@<Reference>` key in the entry is applied
 `ak.wwise.core.object.set` accepts a list of "root entries", each addressing an existing object via `object` (path or GUID). Within each entry you may rename, set properties, set references, replace lists, and create children — recursively.
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.set '{
+python scripts\wwise_waapi.py ak.wwise.core.object.set '{
   "objects": [
     {
       "object": "{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}",
@@ -63,42 +63,42 @@ Use these only when one or two trivial values change. Otherwise prefer `set_obje
 
 ```powershell
 # Set a single property
-python scripts\waapi.py ak.wwise.core.object.setProperty '{"object":"<path>","property":"Volume","value":-3}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setProperty '{"object":"<path>","property":"Volume","value":-3}'
 
 # Set a reference (or clear it with the null GUID)
-python scripts\waapi.py ak.wwise.core.object.setReference '{"object":"<path>","reference":"Attenuation","value":"\\Attenuations\\Default Work Unit\\MyAtt"}'
-python scripts\waapi.py ak.wwise.core.object.setReference '{"object":"<path>","reference":"Attenuation","value":"{00000000-0000-0000-0000-000000000000}"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setReference '{"object":"<path>","reference":"Attenuation","value":"\\Attenuations\\Default Work Unit\\MyAtt"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setReference '{"object":"<path>","reference":"Attenuation","value":"{00000000-0000-0000-0000-000000000000}"}'
 
 # Property randomizer
-python scripts\waapi.py ak.wwise.core.object.setRandomizer '{"object":"<path>","property":"Volume","enabled":true,"min":-3,"max":3}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setRandomizer '{"object":"<path>","property":"Volume","enabled":true,"min":-3,"max":3}'
 
 # State groups + state columns
-python scripts\waapi.py ak.wwise.core.object.setStateGroups '{"object":"<path>","stateGroups":["\\States\\Default Work Unit\\MoodGroup"]}'
-python scripts\waapi.py ak.wwise.core.object.setStateProperties '{"object":"<path>","stateProperties":["Volume","Pitch","Lowpass"]}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setStateGroups '{"object":"<path>","stateGroups":["\\States\\Default Work Unit\\MoodGroup"]}'
+python scripts\wwise_waapi.py ak.wwise.core.object.setStateProperties '{"object":"<path>","stateProperties":["Volume","Pitch","Lowpass"]}'
 ```
 
 ## Move / copy / delete / diff
 
 ```powershell
 # Move
-python scripts\waapi.py ak.wwise.core.object.move '{"object":"<src>","parent":"<dst-parent>","onNameConflict":"rename"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.move '{"object":"<src>","parent":"<dst-parent>","onNameConflict":"rename"}'
 
 # Copy (WARNING: copying a Work Unit is irreversible AND force-saves the project)
-python scripts\waapi.py ak.wwise.core.object.copy '{"object":"<src>","parent":"<dst-parent>","onNameConflict":"rename"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.copy '{"object":"<src>","parent":"<dst-parent>","onNameConflict":"rename"}'
 
 # Delete
-python scripts\waapi.py ak.wwise.core.object.delete '{"object":"<path-or-guid>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.delete '{"object":"<path-or-guid>"}'
 
 # Compare two objects' properties + lists
-python scripts\waapi.py ak.wwise.core.object.diff '{"source":"<a>","target":"<b>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.diff '{"source":"<a>","target":"<b>"}'
 ```
 
 ## Attenuation curves
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getAttenuationCurve '{"object":"\\Attenuations\\Default Work Unit\\MyAtt","curveType":"VolumeDryUsage"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getAttenuationCurve '{"object":"\\Attenuations\\Default Work Unit\\MyAtt","curveType":"VolumeDryUsage"}'
 
-python scripts\waapi.py ak.wwise.core.object.setAttenuationCurve '{
+python scripts\wwise_waapi.py ak.wwise.core.object.setAttenuationCurve '{
   "object":"\\Attenuations\\Default Work Unit\\MyAtt",
   "curveType":"VolumeDryUsage",
   "use":"Custom",
@@ -117,9 +117,9 @@ python scripts\waapi.py ak.wwise.core.object.setAttenuationCurve '{
 When a batch of writes should appear as a single user-undoable step, wrap them with the undo group procedures:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.undo.beginGroup
+python scripts\wwise_waapi.py ak.wwise.core.undo.beginGroup
 # ... your edits ...
-python scripts\waapi.py ak.wwise.core.undo.endGroup
+python scripts\wwise_waapi.py ak.wwise.core.undo.endGroup
 ```
 
 Pair every `beginGroup` with exactly one `endGroup` (or `cancelGroup` to roll back). They nest. Across multiple `waapi.py` invocations this works because the wrapper opens a fresh connection per process — but the undo group lives in Wwise, not in the client, so it spans calls. Still, prefer running grouped edits inside a single Python script for atomicity.
@@ -144,7 +144,7 @@ Many properties don't surface their value until the corresponding override flag 
 Always set the override boolean **in the same `set_objects` entry** as the gated value. If unsure which switch governs a property:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"OutputBusVolume","object":"<path>"}'
+python scripts\wwise_waapi.py ak.wwise.core.object.getPropertyInfo '{"property":"OutputBusVolume","object":"<path>"}'
 ```
 
 The response indicates the override property name when one exists.

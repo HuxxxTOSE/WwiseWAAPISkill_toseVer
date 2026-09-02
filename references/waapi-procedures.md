@@ -1,16 +1,16 @@
 # WAAPI Procedure Catalogue
 
-Complete URI list of WAAPI procedures used by this skill, grouped by domain. **Every URI here is callable with `python scripts/waapi.py <uri> <args-json> [options-json]`.** Argument signatures are the minimum needed to construct calls; for the authoritative schema use:
+Complete URI list of WAAPI procedures used by this skill, grouped by domain. **Every URI here is callable with `python scripts/wwise_waapi.py <uri> <args-json> [options-json]`.** Argument signatures are the minimum needed to construct calls; for the authoritative schema use:
 
 ```powershell
-python scripts/waapi.py ak.wwise.waapi.getSchema '{"uri":"<URI>","includeExamples":true}'
+python scripts/wwise_waapi.py ak.wwise.waapi.getSchema '{"uri":"<URI>","includeExamples":true}'
 ```
 
 To list all procedures Wwise currently exposes:
 
 ```powershell
-python scripts/waapi.py ak.wwise.waapi.getFunctions
-python scripts/waapi.py ak.wwise.waapi.getTopics
+python scripts/wwise_waapi.py ak.wwise.waapi.getFunctions
+python scripts/wwise_waapi.py ak.wwise.waapi.getTopics
 ```
 
 ---

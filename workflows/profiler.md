@@ -5,10 +5,10 @@ The Profiler exposes everything visible in the Wwise Profiler view: voices, buss
 ## Start / stop / save
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.profiler.startCapture
+python scripts\wwise_waapi.py ak.wwise.core.profiler.startCapture
 # … work happens, events get posted, etc. …
-python scripts\waapi.py ak.wwise.core.profiler.stopCapture
-python scripts\waapi.py ak.wwise.core.profiler.saveCapture '{"file": "C:\\captures\\session1.prof"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.stopCapture
+python scripts\wwise_waapi.py ak.wwise.core.profiler.saveCapture '{"file": "C:\\captures\\session1.prof"}'
 ```
 
 `startCapture` and `stopCapture` both return the time cursor in ms.
@@ -16,7 +16,7 @@ python scripts\waapi.py ak.wwise.core.profiler.saveCapture '{"file": "C:\\captur
 ## Decide what to capture
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.profiler.enableProfilerData '{
+python scripts\wwise_waapi.py ak.wwise.core.profiler.enableProfilerData '{
   "dataTypes": [
     {"dataType": "cpu",          "enable": true},
     {"dataType": "voices",       "enable": true},
@@ -33,8 +33,8 @@ This call **overrides the user's Profiler settings** for the session — disable
 ## Read the cursor
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.profiler.getCursorTime '{"cursor": "capture"}'
-python scripts\waapi.py ak.wwise.core.profiler.getCursorTime '{"cursor": "user"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getCursorTime '{"cursor": "capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getCursorTime '{"cursor": "user"}'
 ```
 
 `capture` = latest captured frame. `user` = wherever the user dragged the cursor in the timeline.
@@ -45,32 +45,32 @@ All `get*` queries below accept `time` as an int (ms) or `"user"` / `"capture"`.
 
 ```powershell
 # Performance counters
-python scripts\waapi.py ak.wwise.core.profiler.getPerformanceMonitor '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getPerformanceMonitor '{"time":"capture"}'
 
 # Per-element CPU
-python scripts\waapi.py ak.wwise.core.profiler.getCpuUsage '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getCpuUsage '{"time":"capture"}'
 
 # Voices (defaults: pipelineID, gameObjectID, objectGUID)
-python scripts\waapi.py ak.wwise.core.profiler.getVoices '{"time":"capture"}' '{"return":["pipelineID","objectName","gameObjectName","baseVolume","priority","isVirtual"]}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getVoices '{"time":"capture"}' '{"return":["pipelineID","objectName","gameObjectName","baseVolume","priority","isVirtual"]}'
 
 # Voice contributions for one voice
-python scripts\waapi.py ak.wwise.core.profiler.getVoiceContributions '{"voicePipelineID": 12345, "time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getVoiceContributions '{"voicePipelineID": 12345, "time":"capture"}'
 
 # Busses
-python scripts\waapi.py ak.wwise.core.profiler.getBusses '{"time":"capture"}' '{"return":["pipelineID","objectName","volume","voiceCount","effectCount"]}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getBusses '{"time":"capture"}' '{"return":["pipelineID","objectName","volume","voiceCount","effectCount"]}'
 
 # Audio Objects (Wwise Audio Objects pipeline)
-python scripts\waapi.py ak.wwise.core.profiler.getAudioObjects '{"time":"capture"}' '{"return":["audioObjectID","busName","x","y","z","spread","focus"]}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getAudioObjects '{"time":"capture"}' '{"return":["audioObjectID","busName","x","y","z","spread","focus"]}'
 
 # Game Objects
-python scripts\waapi.py ak.wwise.core.profiler.getGameObjects '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getGameObjects '{"time":"capture"}'
 
 # RTPCs
-python scripts\waapi.py ak.wwise.core.profiler.getRTPCs '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getRTPCs '{"time":"capture"}'
 
 # Loaded / streamed media
-python scripts\waapi.py ak.wwise.core.profiler.getLoadedMedia '{"time":"capture"}'
-python scripts\waapi.py ak.wwise.core.profiler.getStreamedMedia '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getLoadedMedia '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getStreamedMedia '{"time":"capture"}'
 ```
 
 ## Meters
@@ -78,11 +78,11 @@ python scripts\waapi.py ak.wwise.core.profiler.getStreamedMedia '{"time":"captur
 Only the master audio bus has metering enabled by default — register additional busses first:
 
 ```powershell
-python scripts\waapi.py ak.wwise.core.profiler.registerMeter '{"object": "\\Master-Mixer Hierarchy\\Default Work Unit\\Master Audio Bus\\SFX"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.registerMeter '{"object": "\\Master-Mixer Hierarchy\\Default Work Unit\\Master Audio Bus\\SFX"}'
 
-python scripts\waapi.py ak.wwise.core.profiler.getMeters '{"time":"capture"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.getMeters '{"time":"capture"}'
 
-python scripts\waapi.py ak.wwise.core.profiler.unregisterMeter '{"object": "\\Master-Mixer Hierarchy\\Default Work Unit\\Master Audio Bus\\SFX"}'
+python scripts\wwise_waapi.py ak.wwise.core.profiler.unregisterMeter '{"object": "\\Master-Mixer Hierarchy\\Default Work Unit\\Master Audio Bus\\SFX"}'
 ```
 
 Pair every `registerMeter` with an eventual `unregisterMeter`.
